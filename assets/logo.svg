@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Integritree logo">
+  <rect width="512" height="512" rx="112" fill="#1F6B4F"/>
+  <path d="M256 430V330" stroke="#F1F4F0" stroke-width="30" stroke-linecap="round"/>
+  <path d="M256 392L205 345M256 372L312 322" stroke="#F1F4F0" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="256" cy="215" r="125" fill="#F1F4F0"/>
+  <polyline points="166,262 224,222 268,244 346,160" fill="none" stroke="#D9A21B" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="346" cy="160" r="19" fill="#D9A21B"/>
+</svg>

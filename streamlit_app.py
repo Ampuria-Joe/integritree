@@ -15,7 +15,7 @@ from pipeline.etl import process
 from pipeline.exports import build_exports
 from pipeline.synth import generate
 
-st.set_page_config(page_title="Integritree", page_icon="🌾", layout="wide")
+st.set_page_config(page_title="Integritree", page_icon="assets/icon.png", layout="wide")
 COLORS = {"maize": "#D9A21B", "beans": "#B4472F", "sorghum": "#7A5C8C", "potato": "#3B6E9E", "wheat": "#1F6B4F"}
 MAX_MB, MAX_ROWS = 25, 50_000
 
@@ -58,7 +58,8 @@ def csv(df):
 
 
 base = demo()
-st.title("🌾 Integritree")
+st.logo("assets/logo.svg", size="large")
+st.title("Integritree")
 st.caption("Seasonal Performance Pipeline Intelligence")
 
 # ---- filters first
