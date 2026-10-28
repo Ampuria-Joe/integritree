@@ -74,13 +74,13 @@ acc = data["accepted"]
 # ---- side menu: upload, validate, download
 with st.sidebar:
     st.header("Check your data")
-    st.download_button("1. Download CSV template", csv(base["raw"].head(3)), "integritree_template.csv", "text/csv", use_container_width=True)
+    st.download_button("1. Download CSV template", csv(base["raw"].head(3)), "integritree_template.csv", "text/csv", width="stretch")
     with st.expander("Required columns"):
         st.code(", ".join(odk_client.CONTRACT), language=None)
     up = st.file_uploader("2. Upload ODK export (CSV)", type="csv")
     mas = st.file_uploader("Optional: farmer master list (farmer_id, region)", type="csv")
     st.caption(f"Accepted only if every required column is present (max {MAX_MB} MB). Rows failing the quality gates are held back with reasons.")
-    if st.button("3. Validate and analyse", type="primary", use_container_width=True, disabled=up is None):
+    if st.button("3. Validate and analyse", type="primary", width="stretch", disabled=up is None):
         try:
             raw = read_upload(up)
             masters = None
@@ -99,16 +99,16 @@ with st.sidebar:
             st.error(f"File rejected. {e}")
     if "upload" in st.session_state:
         st.success(st.session_state.get("upload_msg", "Upload loaded."))
-        if st.button("Clear upload and return to sample data", use_container_width=True):
+        if st.button("Clear upload and return to sample data", width="stretch"):
             del st.session_state["upload"]
             st.rerun()
 
     st.divider()
     st.header("Download data")
     st.caption(f"Complete {choice.lower()}; the filters do not apply.")
-    st.download_button(f"Passed ({len(data['passed']):,})", csv(data["passed"]), "integritree_passed.csv", "text/csv", use_container_width=True)
-    st.download_button(f"Flagged ({len(data['flagged']):,})", csv(data["flagged"]), "integritree_flagged.csv", "text/csv", use_container_width=True)
-    st.download_button(f"Rejected ({len(data['rejected']):,})", csv(data["rejected"]), "integritree_rejected.csv", "text/csv", use_container_width=True)
+    st.download_button(f"Passed ({len(data['passed']):,})", csv(data["passed"]), "integritree_passed.csv", "text/csv", width="stretch")
+    st.download_button(f"Flagged ({len(data['flagged']):,})", csv(data["flagged"]), "integritree_flagged.csv", "text/csv", width="stretch")
+    st.download_button(f"Rejected ({len(data['rejected']):,})", csv(data["rejected"]), "integritree_rejected.csv", "text/csv", width="stretch")
     st.caption("Passed and flagged records feed the charts. Flagged and rejected files include the reasons.")
 opt = lambda col: [""] + sorted(acc[col].dropna().unique())
 fs = c1.selectbox("Season", opt("season"), format_func=lambda v: v or "All seasons")
@@ -143,19 +143,19 @@ with left:
     else:
         long = pd.DataFrame(t["series"], index=t["seasons"]).rename_axis("season").reset_index().melt("season", var_name="crop", value_name="kg_ha")
         fig = px.line(long, x="season", y="kg_ha", color="crop", markers=True, color_discrete_map=COLORS, title="Yield by season (kg/ha)")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 with right:
     r = an.regions(df)
     vals = r["kg_ha"] if fc else r["index"]
     fig = px.bar(x=vals, y=r["labels"], orientation="h", labels={"x": "kg/ha" if fc else "Index", "y": ""},
                  title=("Yield by region (kg/ha)" if fc else "Yield index by region (100 = crop average)"))
     fig.update_traces(marker_color="#1F6B4F")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 left, right = st.columns(2)
 mg = an.margins(df)
 fig = px.bar(x=mg["labels"], y=mg["margin_ha"], title="Gross margin per hectare by crop (KES)", labels={"x": "", "y": "KES/ha"})
 fig.update_traces(marker_color=["#B4472F" if v < 0 else "#D9A21B" for v in mg["margin_ha"]])
-left.plotly_chart(fig, use_container_width=True)
+left.plotly_chart(fig, width="stretch")
 ir = an.input_response(df)
 if ir["fit"]:
     pts = pd.DataFrame(ir["points"])
@@ -165,7 +165,7 @@ if ir["fit"]:
     if not fc:
         xs = np.array([0, pts.x.max()])
         fig.add_trace(go.Scatter(x=xs, y=ir["fit"]["intercept_idx"] + ir["fit"]["slope_idx"] * xs, mode="lines", name="Trend", line_color="#B4472F"))
-    right.plotly_chart(fig, use_container_width=True)
+    right.plotly_chart(fig, width="stretch")
 
 # ---- data quality
 st.header("Data quality")
@@ -181,11 +181,11 @@ rules = pd.DataFrame(data["dq"]["rules"])
 rules["effect"] = rules.severity.map({"error": "Rejects", "warning": "Flags"})
 rules["note"] = np.where(rules.suspect, "Check the rule before blaming the data", "")
 with st.expander(f"Checks that fired (a check firing on over {SUSPECT_RATE:.0%} of records is marked)", expanded=True):
-    st.dataframe(rules[rules.records > 0][["rule", "description", "gate", "effect", "records", "rate", "note"]], hide_index=True, use_container_width=True)
+    st.dataframe(rules[rules.records > 0][["rule", "description", "gate", "effect", "records", "rate", "note"]], hide_index=True, width="stretch")
 
 st.header("Records")
 with st.expander("Preview filtered records"):
-    st.dataframe(df[[c for c in ("submitted_at", "farmer_id", "region", "season", "crop", "area_ha", "yield_kg_ha", "gross_margin", "has_warning")]].sort_values("submitted_at", ascending=False), hide_index=True, use_container_width=True)
+    st.dataframe(df[[c for c in ("submitted_at", "farmer_id", "region", "season", "crop", "area_ha", "yield_kg_ha", "gross_margin", "has_warning")]].sort_values("submitted_at", ascending=False), hide_index=True, width="stretch")
 
 # ---- findings last
 st.header("What stands out")
