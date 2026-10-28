@@ -1,0 +1,27 @@
+name: nightly-odk-etl
+on:
+  # schedule: [{cron: "0 2 * * *"}]   # enable once ODK secrets are set
+  workflow_dispatch:
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -r requirements.txt
+      - run: pytest -q                       # never load data with a broken pipeline
+      - name: Incremental ingest from ODK Central
+        env:
+          FLASK_APP: app:create_app
+          ODK_URL: ${{ secrets.ODK_URL }}
+          ODK_EMAIL: ${{ secrets.ODK_EMAIL }}
+          ODK_PASSWORD: ${{ secrets.ODK_PASSWORD }}
+          ODK_PROJECT_ID: ${{ secrets.ODK_PROJECT_ID }}
+          ODK_FORM_ID: ${{ vars.ODK_FORM_ID }}
+          ALERT_WEBHOOK: ${{ secrets.ALERT_WEBHOOK }}
+          DB_PATH: ${{ secrets.DB_PATH }}      # point at a persistent DB; runners are ephemeral
+        run: flask ingest --source central
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: etl-log, path: data/logs/etl.log}
