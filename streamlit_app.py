@@ -143,19 +143,19 @@ with left:
     else:
         long = pd.DataFrame(t["series"], index=t["seasons"]).rename_axis("season").reset_index().melt("season", var_name="crop", value_name="kg_ha")
         fig = px.line(long, x="season", y="kg_ha", color="crop", markers=True, color_discrete_map=COLORS, title="Yield by season (kg/ha)")
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig)
 with right:
     r = an.regions(df)
     vals = r["kg_ha"] if fc else r["index"]
     fig = px.bar(x=vals, y=r["labels"], orientation="h", labels={"x": "kg/ha" if fc else "Index", "y": ""},
                  title=("Yield by region (kg/ha)" if fc else "Yield index by region (100 = crop average)"))
     fig.update_traces(marker_color="#1F6B4F")
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig)
 left, right = st.columns(2)
 mg = an.margins(df)
 fig = px.bar(x=mg["labels"], y=mg["margin_ha"], title="Gross margin per hectare by crop (KES)", labels={"x": "", "y": "KES/ha"})
 fig.update_traces(marker_color=["#B4472F" if v < 0 else "#D9A21B" for v in mg["margin_ha"]])
-left.plotly_chart(fig, width="stretch")
+left.plotly_chart(fig)
 ir = an.input_response(df)
 if ir["fit"]:
     pts = pd.DataFrame(ir["points"])
@@ -165,7 +165,7 @@ if ir["fit"]:
     if not fc:
         xs = np.array([0, pts.x.max()])
         fig.add_trace(go.Scatter(x=xs, y=ir["fit"]["intercept_idx"] + ir["fit"]["slope_idx"] * xs, mode="lines", name="Trend", line_color="#B4472F"))
-    right.plotly_chart(fig, width="stretch")
+    right.plotly_chart(fig)
 
 # ---- data quality
 st.header("Data quality")
