@@ -3,7 +3,7 @@
 # Integritree: Seasonal Performance Pipeline Intelligence
 
 **Live demo:** https://integritree.streamlit.app/
-(replace after deploying; the demo opens on synthetic sample data, no login needed)
+
 
 ETL pipeline and Flask dashboard that turns raw ODK survey submissions into agricultural **performance analysis** across seasons, crops and regions, with a gate-based data quality framework in front of it.
 
